@@ -59,12 +59,22 @@ router.post("/auth", async (req, res) => {
 });
 
 router.get("/users/me", authMiddleware, async (req, res) => {
-  console.log(res.locals);
-  res.status(400).send({});
+  const { user } = res.locals;
+  console.log(user);
+  res.send({
+    user,
+  });
 });
 
 app.use("/api", express.urlencoded({ extended: false }), router);
 app.use(express.static("assets"));
+
+app.get("/cart/", async (req, res) => {
+  const articles = await article.find().sort({
+    createdAt: "desc",
+  });
+  res.render("assets/, { articles: articles });
+});
 
 app.listen(8080, () => {
   console.log("서버가 요청을 받을 준비가 됐어요");

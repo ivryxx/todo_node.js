@@ -23,7 +23,7 @@
       rel="stylesheet"
     />
     <link href="/mystyle.css" rel="stylesheet" />
-    <title>스파르타 쇼핑몰 | 장바구니</title>
+    <title>Myblog | 글쓰기</title>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -46,115 +46,6 @@
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
 
     <script src="/api.js"></script>
-    <script>
-      let user;
-      getSelf(function (u) {
-        user = u;
-      });
-
-      $(document).ready(function () {
-        get_goods();
-      });
-
-      function get_goods() {
-        $("#goodsList").empty();
-        getCarts(function (c) {
-          for (let i = 0; i < c.length; i++) {
-            const item = c[i];
-            make_card(item.goods, item.quantity);
-          }
-          getSum();
-        });
-      }
-
-      function order() {
-        getCarts(function (c) {
-          buyLocation(c);
-        });
-      }
-
-      function make_card(item, quantity) {
-        const htmlTemp = `<div class="card mb-2">
-              <div class="row no-gutters">
-                  <div class="col-4" style="background: #868e96;" onclick="location.href='/detail?goodsId=${
-                    item.goodsId
-                  }'">
-                      <img src="${item.thumbnailUrl}"
-                            class="card-img-top h-100" alt="...">
-                  </div>
-                  <div class="col-8">
-                      <div class="card-body py-1">
-                          <div class="card-title row mt-2">
-                              <p class="font-weight-bold col" style="display: inline">${
-                                item.name
-                              }</p>
-                              <span class="card-price col text-right">$${number2decimals(
-                                item.price
-                              )}</span>
-                          </div>
-                          <div class="form-group row mr-0">
-                              <div class="col-7 pr-2">
-                                  <button class="btn btn-outline-sparta btn-block" onclick="removeItem('${
-                                    item.goodsId
-                                  }')">삭제</button>
-                              </div>
-                              <select class="custom-select col-5" id="numberSelect-${
-                                item.goodsId
-                              }">
-                                ${[1, 2, 3, 4, 5]
-                                  .map(
-                                    (i) =>
-                                      `<option ${
-                                        i === quantity ? "selected" : ""
-                                      } value="${i}">${i}</option>`
-                                  )
-                                  .join(" ")}
-                              </select>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>`;
-        $("#goodsList").append(htmlTemp);
-        $(`#numberSelect-${item["goodsId"]}`).change(function () {
-          addToCart(item.goodsId, $(this).val(), function () {
-            getSum();
-          });
-        });
-      }
-
-      function removeItem(goodsId) {
-        deleteCart(goodsId, function () {
-          get_goods();
-        });
-      }
-
-      function getSum() {
-        let $prices = $(".card-price");
-        let $selects = $("select");
-        if ($prices.length != $selects.length) {
-          console.log("길이가 맞지 않습니다.");
-          return;
-        }
-        let sum = 0;
-        for (let i = 0; i < $prices.length; i++) {
-          let price = parseFloat($($prices[i]).text().replace("$", ""));
-          let count = parseInt($($selects[i]).val());
-          sum += price * count;
-        }
-        $("#priceSum").text("$" + number2decimals(sum));
-        sessionStorage.setItem("priceSum", number2decimals(sum));
-      }
-
-      function number2decimals(num) {
-        return (Math.round(num * 100) / 100).toFixed(2);
-      }
-    </script>
-    <style>
-      .card {
-        cursor: pointer;
-      }
-    </style>
   </head>
 
   <body>
@@ -162,14 +53,7 @@
       class="navbar navbar-expand-sm navbar-dark bg-sparta justify-content-end"
     >
       <a class="navbar-brand" href="/goods.html">
-        <img
-          src="/logo_big_tr.png"
-          width="30"
-          height="30"
-          class="d-inline-block align-top"
-          alt=""
-        />
-        스파르타 쇼핑몰
+        <h1 class="mb-4">🛸My Personal Blog🦄</h1>
       </a>
       <button
         class="navbar-toggler ml-auto"
@@ -188,17 +72,9 @@
         style=""
       >
         <ul class="navbar-nav mr-auto text-right">
-          <li class="nav-item" id="link-cart">
-            <a class="nav-link" href="/cart.html">
-              장바구니<i
-                class="fa fa-shopping-cart ml-2"
-                aria-hidden="true"
-              ></i>
-            </a>
-          </li>
           <li class="nav-item" id="link-logout">
             <a class="nav-link" data-toggle="modal" data-target="#signOutModal">
-              로그아웃<i class="fa fa-sign-out ml-2" aria-hidden="true"></i>
+              Logout<i class="fa fa-sign-out ml-2" aria-hidden="true"></i>
             </a>
             <div
               class="modal text-left"
@@ -211,7 +87,7 @@
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="signOutModalLabel">로그아웃</h5>
+                    <h5 class="modal-title" id="signOutModalLabel">Logout</h5>
                     <button
                       type="button"
                       class="close"
@@ -221,9 +97,7 @@
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                  <div class="modal-body">
-                    정말로 로그아웃 하시겠습니까?
-                  </div>
+                  <div class="modal-body">정말로 로그아웃 하시겠습니까?</div>
                   <div class="modal-footer">
                     <button
                       type="button"
@@ -247,57 +121,54 @@
         </ul>
       </div>
     </nav>
-    <div class="wrap">
-      <div class="mb-3">
-        <h4>
-          <i class="fa fa-shopping-cart mr-1" aria-hidden="true"></i>장바구니
-        </h4>
+    <div class="container">
+      <h3 class="mb-4">✏Create New Post</h3>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          class="form-control"
+          placeholder="Title"
+        />
       </div>
-      <div id="goodsList">
-        <div class="card mb-2" onclick="location.href='#'">
-          <div class="row no-gutters">
-            <div class="col-4" style="background: #868e96">
-              <img
-                src="https://cdn.pixabay.com/photo/2016/09/07/19/54/wines-1652455_1280.jpg"
-                class="card-img-top h-100"
-                alt="..."
-              />
-            </div>
-            <div class="col-8">
-              <div class="card-body py-1">
-                <div class="card-title row mt-2">
-                  <p class="font-weight-bold col" style="display: inline">
-                    상품 1
-                  </p>
-                  <span class="card-price col text-right">$6.20</span>
-                </div>
-                <div class="form-group row mr-0">
-                  <div class="col-7 pr-2">
-                    <button class="btn btn-outline-sparta btn-block">
-                      삭제
-                    </button>
-                  </div>
-                  <!--                                    <label for="numberSelect" class="col col-form-label">수량</label>-->
-                  <select class="custom-select col-5" id="numberSelect">
-                    <option selected value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="form-group">
+        <label for="description">Name</label>
+        <textarea
+          name="description"
+          id="description"
+          class="form-control"
+          placeholder="Your name"
+        ></textarea>
       </div>
-      <hr />
+      <div class="form-group">
+        <label for="markdown">Markdown</label>
+        <textarea
+          required
+          name="markdown"
+          id="markdown"
+          class="form-control"
+          style="height: 300px"
+          placeholder="Write the contents here!"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="Password">Password</label>
+        <input
+          required
+          type="password"
+          name="Password"
+          id="Password"
+          class="form-control"
+          placeholder="Password"
+        />
+      </div>
 
-      <div class="row mb-3">
-        <div class="col-5">총 상품금액</div>
-        <div class="col-7 text-right" id="priceSum">$6.20</div>
-      </div>
-      <button type="button" class="btn btn-sparta btn-block" onclick="order()">
-        구매
-      </button>
+      <a href="/" class="btn btn-secondary mt-4">Cancel</a>
+      <button type="submit" class="btn btn-primary mt-4">Save</button>
+
+      <form action="/articles" method="POST"></form>
     </div>
   </body>
 </html>
